@@ -2,7 +2,7 @@
     "name": "Cool Extension haha",
     "version": "1.0",
     "description": "Pomodoro Timer",
-    "permissions": ["tabs","activeTab", "storage"],
+    "permissions": ["tabs","activeTab", "storage", "notifications"],
     "background": {
         "scripts": ["src/js/background.js"],
         "persistent": false
@@ -15,5 +15,8 @@
             "matches": ["<all_urls>"],
             "js": ["src/js/fish.js"]
         }],
+    "web_accessible_resources": [
+        "assets/*.png"
+    ],
     "manifest_version": 2
 }

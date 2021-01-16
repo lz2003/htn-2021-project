@@ -1,12 +1,12 @@
-var fish = document.querySelector('#start_button');
-var timer = document.querySelector('#timer_button');
-var port;
+var endTimer = document.querySelector('#stop_button');
+var timer = document.querySelector('#start_button');
+var viewCollection = document.querySelector('#open_button');
 
 timer.onclick = function () { 
     // Send first message to check if timer is counting
     chrome.runtime.sendMessage({action: "check"}, (response) => {
         // If not, send message to start timer
-        if (!response.on) {
+        if (!response.status) {
             chrome.runtime.sendMessage({action: "start"}, (response) => {
                 console.log(response.status);
             });
@@ -23,11 +23,37 @@ timer.onclick = function () {
     });*/
 }
 
-/*
-window.onload = function () {
-    document.getElementById("txt").innerHTML = "00:00";
+endTimer.onclick = function () { 
+    // Send first message to check if timer is counting
+    chrome.runtime.sendMessage({action: "check"}, (response) => {
+        // If not, send message to start timer
+        if (response.status) {
+            chrome.runtime.sendMessage({action: "stop"}, (response) => {
+                console.log(response.status);
+                document.getElementById("time").innerHTML =  "00:00";
+            });
+        } else {
+            console.log("Timer not active!")
+        }
+    });
 
-}*/
+}
+
+viewCollection.onclick = function () { 
+    chrome.windows.create({
+        type: 'normal',
+        url:  chrome.extension.getURL('../html/collections.html')
+    }, 
+    (win) => {
+
+    });
+
+}
+
+window.onload = function () {
+    document.getElementById("time").innerHTML = "00:00";
+
+}
 
 // Displays into actual nice text haha
 function displayTime(seconds) {
@@ -45,7 +71,6 @@ function displayTime(seconds) {
 
 // Listen for messages from background
 chrome.extension.onMessage.addListener((response, _, sendResponse) => {
-    console.log(response.seconds);
     if (response.seconds >= 0) {
         displayTime(response.seconds);
     }
