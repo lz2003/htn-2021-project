@@ -1,5 +1,7 @@
 var counting = false;
 var remain;
+var views;
+
 
 // Listens for messages
 chrome.runtime.onMessage.addListener(
@@ -39,8 +41,13 @@ function createTimer(timerMinutes, timerSeconds)  {
             counting = false;
             return;
         }
-        // Makes an error but it does not break anything ;(
-        chrome.runtime.sendMessage({seconds: remain}, _ => {});
+        
+        // Ay fixed it
+        views = chrome.extension.getViews({ type: "popup" });
+        if (views.length > 0)
+        {
+            chrome.runtime.sendMessage({seconds: remain}, _ => {});
+        }
     }, frequency);
 
 }
