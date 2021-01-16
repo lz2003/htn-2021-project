@@ -4,11 +4,11 @@
     "description": "Pomodoro Timer",
     "permissions": ["storage"],
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["src/js/background.js"],
         "persistent": false
     },
     "page-action": {
-        "default_popup": "popup.html"
+        "default_popup": "src/html/popup.html"
     },
     "manifest_version": 3
 }
