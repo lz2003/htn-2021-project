@@ -39,6 +39,8 @@ function createTimer(timerMinutes, timerSeconds)  {
         if (remain <= 0) {
             clearInterval(int);
             counting = false;
+            //runs until here
+            chrome.runtime.sendMessage({fishing: "caught"}, function(response){}); //when timer is done, alert fish.js to spit out a new fish
             return;
         }
         
