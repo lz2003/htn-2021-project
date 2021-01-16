@@ -10,7 +10,7 @@
 	cursor: pointer;
 	border: 2px solid black;
 	border-radius: 4px;
-	overflow: hidden
+	overflow: hidden;
 
 	transition: all 0.4s;
 }
