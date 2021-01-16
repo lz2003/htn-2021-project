@@ -1,4 +1,5 @@
-.button
+/*
+button
 {
 	position: fixed;
 	top: 50%;
@@ -15,7 +16,7 @@
 	transition: all 0.4s;
 }
 
-.button:before
+button:before
 {
 	content:"";
 	position: absolute;
@@ -29,9 +30,14 @@
 	transition: all 0.4s;
 }
 
-.button:hover:before
+button:hover:before
 {
 	height: 100%;
 
 	transition: all 0.4s;
+}
+*/
+.content {
+    width: 470px;
+    height: 330px;
 }
