@@ -67,12 +67,8 @@ endTimer.onclick = function () {
 }
 
 viewCollection.onclick = function () { 
-    chrome.windows.create({
-        type: 'normal',
-        url:  chrome.extension.getURL('../html/collections.html')
-    }, 
-    (win) => {
-
+    chrome.runtime.sendMessage({action: "view"}, (response) => {
+        console.log("hee");
     });
 
 }
