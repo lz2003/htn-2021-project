@@ -1,17 +1,44 @@
 var endTimer = document.querySelector('#stop_button');
 var timer = document.querySelector('#start_button');
 var viewCollection = document.querySelector('#open_button');
+var isCounting = false;
+chrome.runtime.sendMessage({action: "check"}, (response)=> {if (response.status){isCounting=true; timer.innerHTML=timer.innerHTML.replace("start fishing", "stop fishing");;}})
 
 timer.onclick = function () { 
     // Send first message to check if timer is counting
-    chrome.runtime.sendMessage({action: "check"}, (response) => {
-        // If not, send message to start timer
-        if (!response.status) {
+    chrome.runtime.sendMessage({action: "check"}, (response) => {    
+
+        if (!response.status) { //if timer not counting, start timer and set isCounting to true
             chrome.runtime.sendMessage({action: "start"}, (response) => {
+                isCounting = true;
+                timer.innerHTML="stop fishing";
                 console.log(response.status);
             });
-        } else {
-            console.log("Timer still counting!")
+        } 
+        else if (response.status && isCounting)
+        { //if timer is already counting (iscounting=true), then the second click will reset the timer
+            timer.innerHTML="start fishing"
+            isCounting = false;
+            chrome.runtime.sendMessage({action: "check"}, (response) => {
+            // If not, send message to start timer
+                if (response.status) {
+                    chrome.runtime.sendMessage({action: "stop"}, (response) => {
+                        console.log(response.status);
+                        document.getElementById("time").innerHTML =  "00:00";
+                    });
+                } 
+                else 
+                {
+                console.log("Timer not active!")
+                }
+            });
+        
+        }
+        else 
+        {
+            console.log(response.status);
+            console.log(isCounting);
+            console.log("Timer still counting!");
         }
     });
 
