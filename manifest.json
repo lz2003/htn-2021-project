@@ -1,0 +1,14 @@
+{
+    "name": "Cool Extension haha",
+    "version": "1.0",
+    "description": "Pomodoro Timer",
+    "permissions": ["storage"],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "page-action": {
+        "default_popup": "popup.html"
+    },
+    "manifest_version": 3
+}
