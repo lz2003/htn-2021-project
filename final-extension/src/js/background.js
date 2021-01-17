@@ -4,19 +4,27 @@ var remain;
 var views;
 var fishdict = {};
 
+var startTimerAudio = new Audio(chrome.runtime.getURL("../../assets/starttimer.wav"));
+var endTimerAudio = new Audio(chrome.runtime.getURL("../../assets/endtimer.wav"));
+
 // Listens for messages
 chrome.runtime.onMessage.addListener(
     (request, _, sendResponse) => {
         if (request.action == "start") {
-            createTimer(0, 5);
+            startTimerAudio.play();
+            chrome.storage.local.get(["duration"], function(result){ 
+                createTimer(result.duration);
+            });
             sendResponse( {status: "success"} );
         } else if (request.action == "check") {
             sendResponse( {status: counting});
         } else if (request.action == "stop") {
+            endTimerAudio.play();
             endTimer = true;
             chrome.browserAction.setBadgeText({text: null}, function(response){});
             sendResponse( {status: "stopping timer"});
         } else if (request.action == "view") {
+            startTimerAudio.play();
             openCollections();
             sendResponse( {status: "opened collections"});
         }
@@ -26,21 +34,23 @@ chrome.runtime.onMessage.addListener(
     }
 )
 
-function createTimer(timerMinutes, timerSeconds)  {
+// Creates the timer
+function createTimer(timerMinutes)  {
     // Get time
     counting = true;
     var currTime = new Date().getTime();
 
     // Calculate total time 
-    var totalSeconds = (timerMinutes * 60) + (timerSeconds);
-    if (totalSeconds > 1500) {
-        alert("Too big");
+    var totalSeconds = (timerMinutes * 60);
+    if (totalSeconds > 1500 || totalSeconds < 0) {
+        alert("Invalid range");
         counting = false;
         return;
     }
     var finalTime = new Date(currTime + totalSeconds * 1000);
     var frequency = 100;
 
+    // Countdown
     var int = setInterval(function() {
         var currTime = new Date();
         remain = (finalTime - currTime) / 1000;
@@ -50,6 +60,7 @@ function createTimer(timerMinutes, timerSeconds)  {
             counting = false;
             if (!endTimer) notifyUser();
             endTimer = false;
+            chrome.browserAction.setBadgeText({text: ("")}, function(response){});
             return;
         }
         
@@ -57,6 +68,7 @@ function createTimer(timerMinutes, timerSeconds)  {
         views = chrome.extension.getViews({ type: "popup" });
         if (views.length > 0) chrome.runtime.sendMessage({seconds: remain, name: null}, _ => {})   
 
+        // For displaying badge
         var m = Math.floor(remain / 60);
         var s = Math.floor(remain % 60);
 
@@ -79,8 +91,7 @@ function notifyUser() {
         iconUrl: chrome.extension.getURL('../assets/icon.png')
     }, 
     (not) => {
-        // PLAY SOUND WOWOOWOWOOWOW
-        console.log("WOW")
+        //console.log("WOW")
         //sends out message to change name of start button to "start fishing"
         views = chrome.extension.getViews({ type: "popup" });
         if (views.length > 0) chrome.runtime.sendMessage({name:"start fishing"}, function(response){console.log("change button");})
@@ -88,6 +99,7 @@ function notifyUser() {
     });
 }
 
+// Opens the compendium of fish!
 function openCollections() {
     chrome.tabs.create({ 'url': '/src/html/collections.html'},(tab) => {});
 }
@@ -101,27 +113,30 @@ function randomFish() //updates the fish dictionary, returns a random name from 
 {
 	//chrome.storage.local.set({storage: fishdict}, function(){})
 
+    // Retreive fish data
 	chrome.storage.local.get(["storage"], function(result){
 		fishdict = result.storage;
 
-		var fishNames = Object.keys(fishdict);
-		var fishTypes = fishNames.length;
+        // Extract keys
+        var fishNames = Object.keys(fishdict);
+        // Get total number of unqiue fishes
+        var fishTypes = fishNames.length;
+        
+        // Generate a random fish
 		var rand = randomNumber(0, fishTypes);
-
         var name = fishNames[rand];
-		console.log(name);
-		if (fishdict[name]) 
-		{
-			//fish has already been caught before, no need to update storage
-            console.log("caught before");
-		}
-		else 
-		{
-			//new fish! update dictionary and save locally
-			console.log("not caught before");
-			fishdict[name] = true;
-			chrome.storage.local.set({storage: fishdict}, function(){})
-        }
+
+        /* For testing outputs
+        console.log(name);
+		if (fishdict[name] > 0) console.log("caught before");
+        else console.log("not caught before");
+        */
+
+        // Set the storage
+        fishdict[name]++;
+        chrome.storage.local.set({storage: fishdict}, function(){})
+
+        // Send popup the updated image
         chrome.storage.local.set({history: name}, function(){})
         views = chrome.extension.getViews({ type: "popup" });
         if (views.length > 0) chrome.runtime.sendMessage({seconds: -1, name: name}, _ => {})   

@@ -1,7 +1,7 @@
 {
-    "name": "Cool Extension haha",
+    "name": "Productivity Fishing",
     "version": "1.0",
-    "description": "Pomodoro Timer",
+    "description": "A pomodoro timer with fishy twist.",
     "permissions": ["tabs","activeTab", "storage", "notifications"],
     "background": {
         "scripts": ["src/js/background.js", "src/js/init.js"],

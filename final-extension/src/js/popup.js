@@ -1,9 +1,14 @@
 var endTimer = document.querySelector('#stop_button');
 var timer = document.querySelector('#start_button');
 var viewCollection = document.querySelector('#open_button');
+
+var minus = document.querySelector('#minus');
+var plus = document.querySelector('#plus');
+
 var isCounting = false;
 chrome.runtime.sendMessage({action: "check"}, (response)=> {if (response.status){isCounting=true; timer.innerHTML=timer.innerHTML.replace("start fishing", "stop fishing");;}})
 
+// Starts the timer if it is not running
 timer.onclick = function () { 
     // Send first message to check if timer is counting
     chrome.runtime.sendMessage({action: "check"}, (response) => {    
@@ -12,7 +17,7 @@ timer.onclick = function () {
             chrome.runtime.sendMessage({action: "start"}, (response) => {
                 isCounting = true;
                 timer.innerHTML="stop fishing";
-                console.log(response.status);
+                //console.log(response.status);
             });
         } 
         else if (response.status && isCounting)
@@ -23,7 +28,7 @@ timer.onclick = function () {
             // If not, send message to start timer
                 if (response.status) {
                     chrome.runtime.sendMessage({action: "stop"}, (response) => {
-                        console.log(response.status);
+                        //console.log(response.status);
                         document.getElementById("time").innerHTML =  "00:00";
                     });
                 } 
@@ -36,8 +41,8 @@ timer.onclick = function () {
         }
         else 
         {
-            console.log(response.status);
-            console.log(isCounting);
+            //console.log(response.status);
+            //console.log(isCounting);
             console.log("Timer still counting!");
         }
     });
@@ -50,13 +55,14 @@ timer.onclick = function () {
     });*/
 }
 
+// Ends currently running timer
 endTimer.onclick = function () { 
     // Send first message to check if timer is counting
     chrome.runtime.sendMessage({action: "check"}, (response) => {
         // If not, send message to end timer
         if (response.status) {
             chrome.runtime.sendMessage({action: "stop"}, (response) => {
-                console.log(response.status);
+                //console.log(response.status);
                 document.getElementById("time").innerHTML =  "00:00";
             });
         } else {
@@ -66,28 +72,49 @@ endTimer.onclick = function () {
 
 }
 
+// Sends message to background to open the compendium
 viewCollection.onclick = function () { 
     chrome.runtime.sendMessage({action: "view"}, (response) => {});
 
 }
 
+minus.onclick = function () {
+    chrome.storage.local.get(["duration"], function(result){ 
+        if (result.duration > 1) {
+            chrome.storage.local.set({duration: result.duration-1}, function(){})
+            displayDuration(result.duration-1);
+        }
+    });
+}
+
+plus.onclick = function () {
+    chrome.storage.local.get(["duration"], function(result){ 
+        if (result.duration < 25) {
+            chrome.storage.local.set({duration: result.duration+1}, function(){})
+            displayDuration(result.duration+1);
+        }
+    });
+}
+
+// Loads the popup 
 window.onload = function () {
     document.getElementById("time").innerHTML = "00:00";
 
-    chrome.storage.local.get(["history"], function(result){ 
+    chrome.storage.local.get(["history", "duration"], function(result){ 
         var lastFish = result.history;
 
         if (lastFish != "none") {
-            document.getElementById("fishdisplay").innerHTML = "fish: " + lastFish;
-            var url = chrome.extension.getURL('/assets/' + lastFish + '.png')
-            
-            document.getElementById("imagecontainer").style.backgroundImage = 'url(' + url + ')';
+            displayFish(lastFish);
         } else {
             var url = chrome.extension.getURL('/assets/placeholder.png');
             document.getElementById("imagecontainer").style.backgroundImage = 'url(' + url + ')';
             document.getElementById("fishdisplay").innerHTML = "Start the timer!";
         }
+
+        var currMinutes = result.duration;
+        displayDuration(currMinutes);
     });
+
 }
 
 // Displays into actual nice text haha
@@ -95,24 +122,26 @@ function displayTime(seconds) {
     var m = Math.floor(seconds / 60);
     var s = Math.floor(seconds % 60);
 
-    if (s < 10) {
-        s = "0" + s;
-    }
-    if (m < 10) {
-        m = "0" + m;
-    }
+    if (s < 10) s = "0" + s;
+    if (m < 10) m = "0" + m;
+
     document.getElementById("time").innerHTML =  m + ":" + s;
 }
 
+// Displays the correct fish
 function displayFish(fish) {
-    document.getElementById("fishdisplay").innerHTML = "fish: " + fish;
-    var url = chrome.extension.getURL('/assets/' + fish + '.png')
+    document.getElementById("fishdisplay").innerHTML = "you caught a(n) " + fish + "!";
+    var url = chrome.extension.getURL('/assets/' + fish + '.png');
     document.getElementById("imagecontainer").style.backgroundImage = 'url(' + url + ')';
+}
+
+function displayDuration(minutes) {
+    document.getElementById("user_selection").innerHTML = minutes;
 }
 
 // Listen for messages from background
 chrome.extension.onMessage.addListener((response, _, sendResponse) => {
-    console.log(response.name);
+    //console.log(response.name);
     if (response.seconds >= 0) {
         displayTime(response.seconds);
     } 

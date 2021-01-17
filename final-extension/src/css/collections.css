@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+
+body {
+font-family: 'Pangolin', cursive;
+}
+
+#title {
+    font-size: 70px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+}
+
+th, td {
+    text-align: center;
+}
+
+td {
+    width:20%;
+    font-size: 20px;
+}
+
+th {
+    font-size: 36px;
+}
+
+img {
+    width: 50%;
+    height: auto;
+}

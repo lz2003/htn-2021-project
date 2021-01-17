@@ -8,11 +8,11 @@ function loadCollection() {
     var row = document.createElement('tr');
 
     var title = document.createElement('th');
-        title.innerHTML = "Fish Portrait";
+        title.innerHTML = "Portrait";
     row.appendChild(title);
 
     title = document.createElement('th');
-    title.innerHTML = "Fish Name";
+    title.innerHTML = "Name";
     row.appendChild(title);
 
     title = document.createElement('th');
@@ -25,25 +25,27 @@ function loadCollection() {
     
     chrome.storage.local.get(function(result){
         var fishCollection = result.storage;
-        console.log(fishCollection);
+        //console.log(fishCollection);
 
         for (var key in fishCollection) {
             row = document.createElement('tr');
             var name = document.createElement('td');
             var status = document.createElement('td');
-            var image = document.createElement('td');
+            var holder = document.createElement('td');
+            var image = document.createElement('img');
 
-            if (fishCollection[key]) {
+            if (fishCollection[key] > 0) {
                 name.innerHTML = key;
-                status.innerHTML = "Caught!";
+                status.innerHTML = "caught! x" + fishCollection[key];
+                image.src = chrome.extension.getURL('../assets/' + key + '.png');
             } else {
                 name.innerHTML = "???";
-                status.innerHTML = "Uncaught!";
+                status.innerHTML = "uncaught!";
+                image.src = chrome.extension.getURL('../assets/placeholder.png');
             }
 
-            image.innerHTML = "PLACEHOLDER";
-
-            row.appendChild(image);
+            holder.appendChild(image);
+            row.appendChild(holder);
             row.appendChild(name);
             row.appendChild(status);
             table.appendChild(row);
