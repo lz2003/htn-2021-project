@@ -1,10 +1,13 @@
 chrome.runtime.onInstalled.addListener((details)=> {
 
-    var fishdict = {
+    const fishdict = {
         "mola": false,
-        "lionfish": false,
-        "tang": false,
-        "clownfish": false
+        "moray": false,
+        "scallop": false,
+        "shrimp": false,
+        "octopus": false,
+        "tuna": false,
+        "jellyfish": false
     }
 
     console.log(details.reason)

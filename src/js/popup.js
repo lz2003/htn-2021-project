@@ -79,7 +79,12 @@ window.onload = function () {
 
         if (lastFish != "none") {
             document.getElementById("fishdisplay").innerHTML = "fish: " + lastFish;
+            var url = chrome.extension.getURL('/assets/' + lastFish + '.png')
+            
+            document.getElementById("imagecontainer").style.backgroundImage = 'url(' + url + ')';
         } else {
+            var url = chrome.extension.getURL('/assets/placeholder.png');
+            document.getElementById("imagecontainer").style.backgroundImage = 'url(' + url + ')';
             document.getElementById("fishdisplay").innerHTML = "Start the timer!";
         }
     });
@@ -101,6 +106,8 @@ function displayTime(seconds) {
 
 function displayFish(fish) {
     document.getElementById("fishdisplay").innerHTML = "fish: " + fish;
+    var url = chrome.extension.getURL('/assets/' + fish + '.png')
+    document.getElementById("imagecontainer").style.backgroundImage = 'url(' + url + ')';
 }
 
 // Listen for messages from background
