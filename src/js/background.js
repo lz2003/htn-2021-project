@@ -55,22 +55,13 @@ function createTimer(timerMinutes, timerSeconds)  {
         
         // Ay fixed it kind of?
         views = chrome.extension.getViews({ type: "popup" });
-        if (views.length > 0)
-        {
-            chrome.runtime.sendMessage({seconds: remain}, _ => {});
-
-            
-        }
+        if (views.length > 0) chrome.runtime.sendMessage({seconds: remain, name: null}, _ => {})   
 
         var m = Math.floor(remain / 60);
         var s = Math.floor(remain % 60);
 
-        if (s < 10) {
-            s = "0" + s;
-        }
-        if (m < 10) {
-            m = "0" + m;
-        }
+        if (s < 10) s = "0" + s;
+        if (m < 10) m = "0" + m;
 
         chrome.browserAction.setBadgeBackgroundColor({color:"#153F9F"}, function(response){});
         chrome.browserAction.setBadgeText({text: (m+":"+s)}, function(response){});
@@ -83,22 +74,22 @@ function notifyUser() {
     chrome.notifications.create("caught-fish", 
     {
         type:'basic',
-        title:"Timer ended!",
-        message:"You caught a fish!",
-        iconUrl: chrome.extension.getURL('../assets/bruh.png')
+        title:"Pomodoro timer ended!",
+        message:"You caught a fish! Check the compendium for all captured fish.",
+        iconUrl: chrome.extension.getURL('../assets/icon.png')
     }, 
     (not) => {
         // PLAY SOUND WOWOOWOWOOWOW
         console.log("WOW")
-        randomFish();
+        //sends out message to change name of start button to "start fishing"
+        views = chrome.extension.getViews({ type: "popup" });
+        if (views.length > 0) chrome.runtime.sendMessage({name:"start fishing"}, function(response){console.log("change button");})
+        randomFish()
     });
 }
 
 function openCollections() {
-    chrome.tabs.create({ 'url': '/src/html/collections.html'},
-    (tab) => {
-
-    });
+    chrome.tabs.create({ 'url': '/src/html/collections.html'},(tab) => {});
 }
 
 function randomNumber(max, min) //picks random number between max (inclusive) and min (inclusive)
@@ -117,12 +108,12 @@ function randomFish() //updates the fish dictionary, returns a random name from 
 		var fishTypes = fishNames.length;
 		var rand = randomNumber(0, fishTypes);
 
-		var name = fishNames[rand];
+        var name = fishNames[rand];
 		console.log(name);
 		if (fishdict[name]) 
 		{
 			//fish has already been caught before, no need to update storage
-			console.log("caught before");
+            console.log("caught before");
 		}
 		else 
 		{
@@ -130,7 +121,9 @@ function randomFish() //updates the fish dictionary, returns a random name from 
 			console.log("not caught before");
 			fishdict[name] = true;
 			chrome.storage.local.set({storage: fishdict}, function(){})
-		}
+        }
+        chrome.storage.local.set({history: name}, function(){})
+        views = chrome.extension.getViews({ type: "popup" });
+        if (views.length > 0) chrome.runtime.sendMessage({seconds: -1, name: name}, _ => {})   
 	});
-
 }

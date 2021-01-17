@@ -53,7 +53,7 @@ timer.onclick = function () {
 endTimer.onclick = function () { 
     // Send first message to check if timer is counting
     chrome.runtime.sendMessage({action: "check"}, (response) => {
-        // If not, send message to start timer
+        // If not, send message to end timer
         if (response.status) {
             chrome.runtime.sendMessage({action: "stop"}, (response) => {
                 console.log(response.status);
@@ -67,15 +67,22 @@ endTimer.onclick = function () {
 }
 
 viewCollection.onclick = function () { 
-    chrome.runtime.sendMessage({action: "view"}, (response) => {
-        console.log("hee");
-    });
+    chrome.runtime.sendMessage({action: "view"}, (response) => {});
 
 }
 
 window.onload = function () {
     document.getElementById("time").innerHTML = "00:00";
 
+    chrome.storage.local.get(["history"], function(result){ 
+        var lastFish = result.history;
+
+        if (lastFish != "none") {
+            document.getElementById("fishdisplay").innerHTML = "fish: " + lastFish;
+        } else {
+            document.getElementById("fishdisplay").innerHTML = "Start the timer!";
+        }
+    });
 }
 
 // Displays into actual nice text haha
@@ -92,10 +99,22 @@ function displayTime(seconds) {
     document.getElementById("time").innerHTML =  m + ":" + s;
 }
 
+function displayFish(fish) {
+    document.getElementById("fishdisplay").innerHTML = "fish: " + fish;
+}
+
 // Listen for messages from background
 chrome.extension.onMessage.addListener((response, _, sendResponse) => {
+    console.log(response.name);
     if (response.seconds >= 0) {
         displayTime(response.seconds);
+    } 
+    if (response.name == "start fishing")
+    {
+        timer.innerHTML="start fishing"
+    }
+    if (response.name != null) {
+        displayFish(response.name);
     }
     sendResponse();
 });

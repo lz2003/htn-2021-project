@@ -3,7 +3,7 @@ chrome.runtime.onInstalled.addListener((details)=> {
     var fishdict = {
         "mola": false,
         "lionfish": false,
-        "blue tang": false,
+        "tang": false,
         "clownfish": false
     }
 
@@ -11,6 +11,7 @@ chrome.runtime.onInstalled.addListener((details)=> {
     if (details.reason == "install" || details.reason == "update" ) {
         console.log("Added");
         chrome.storage.local.set({storage: fishdict}, function(){})
+
+        chrome.storage.local.set({history: "none"}, function(){})
     }
-    console.log("DOne");
 });

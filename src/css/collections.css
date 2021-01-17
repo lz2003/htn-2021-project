@@ -1,12 +1,17 @@
+#title {
+    font-size: xx-large;
+    text-align: center;
+}
+
 table {
     width: 100%;
-    border: 1px solid black;
 }
 
 th, td {
     padding: 20px;
+    text-align: center;
 }
 
 th {
-    color: red;
+    font-size: large;
 }
