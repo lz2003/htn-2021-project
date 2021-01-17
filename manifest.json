@@ -4,17 +4,14 @@
     "description": "Pomodoro Timer",
     "permissions": ["tabs","activeTab", "storage", "notifications"],
     "background": {
-        "scripts": ["src/js/background.js"],
+        "scripts": ["src/js/background.js", "src/js/init.js"],
         "persistent": false
     },
     "browser_action": {
-        "default_popup": "src/html/popup.html"
+        "default_popup": "src/html/popup.html",
+        "default_icon": "assets/icon.png"
     },
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": ["src/js/fish.js"]
-        }],
+    "options_page": "src/html/collections.html",
     "web_accessible_resources": [
         "assets/*.png"
     ],
