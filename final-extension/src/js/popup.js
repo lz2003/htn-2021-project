@@ -80,7 +80,7 @@ viewCollection.onclick = function () {
 
 minus.onclick = function () {
     chrome.storage.local.get(["duration"], function(result){ 
-        if (result.duration > 1) {
+        if (result.duration > 5) {
             chrome.storage.local.set({duration: result.duration-1}, function(){})
             displayDuration(result.duration-1);
         }
