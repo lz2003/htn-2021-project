@@ -7,7 +7,7 @@ A simple chrome extension that features a pomodoro timer with a fishy twist!
 
 ### How to use Productivity Fishing
 
-Download/Clone the repository. Go to chrome://extensions/ and turn on developer mode. Unpacked the `final-extension` directory to start using the extension!
+Download/Clone the repository. Go to chrome://extensions/ and turn on developer mode. Unpack the `final-extension` directory to start using the extension!
 
 ### General Features
 
